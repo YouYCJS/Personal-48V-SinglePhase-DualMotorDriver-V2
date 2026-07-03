@@ -1,7 +1,7 @@
 # 48V-SinglePhase-DualMotorDriver-V2
 **48V 단상 듀얼 모터 드라이버 — 2층 재설계 버전**
 
-> 이전 버전: [4-Layer 버전]([이전_레포_URL])(https://github.com/YouYCJS/Personal-48V-SinglePhase-DualMotorDriver)
+> 이전 버전: [4-Layer 버전]https://github.com/YouYCJS/Personal-48V-SinglePhase-DualMotorDriver
 > 제조사 공정 제약(블라인드/베리드 비아 미지원)에 대응해 2층으로 재설계한 버전입니다.
 
 <img src="https://github.com/user-attachments/assets/79e0bdce-b672-4483-9675-675eaae1045d" alt="2층 보드 3D 앞면" width="60%">
