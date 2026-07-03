@@ -1,2 +1,76 @@
-# Personal-48V-SinglePhase-DualMotorDriver-Fix-
-Personal-48V-SinglePhase-DualMotorDriver(Fix)
+# 48V-SinglePhase-DualMotorDriver-V2
+**48V 단상 듀얼 모터 드라이버 — 2층 재설계 버전**
+
+> 이전 버전: [4-Layer 버전]([이전_레포_URL](https://github.com/YouYCJS/Personal-48V-SinglePhase-DualMotorDriver))
+> 제조사 공정 제약(블라인드/베리드 비아 미지원)에 대응해 2층으로 재설계한 버전입니다.
+
+<img src="https://github.com/user-attachments/assets/79e0bdce-b672-4483-9675-675eaae1045d" alt="2층 보드 3D 앞면" width="60%">
+
+## 개요
+로터·스테이터를 구동하는 48V 단상 듀얼 모터 드라이버.
+초기 4층 설계가 제조사 공정 제약에 걸려, 관통 비아만으로 구성 가능하도록
+2층으로 재설계한 버전입니다.
+
+## 4-Layer → 2-Layer 재설계 배경
+
+초기 4층으로 설계했으나, PCB 제조사(JLCPCB)로부터 블라인드/베리드 비아가
+포함되어 제조가 불가하다는 피드백을 받았다.
+
+- **원인**: 4층 구조에서 일부 비아가 블라인드/베리드 비아로 출력됨
+  (JLCPCB 표준 공정 미지원)
+- **대응**: 관통 비아만으로 구성 가능하도록 2층으로 재설계
+- **결과**: 제조 가능 확보 + 제조 단가·난이도 절감
+
+## 설계 트레이드오프: 2-Layer 전환의 대가
+
+2층 전환으로 제조 가능성·단가는 확보했으나, 전기적 성능 측면의 트레이드오프가 발생.
+
+- **그라운드**: 전용 GND 플레인 상실 → 리턴 경로·EMI 관리가 더 까다로움
+- **전원 분배**: 파워 플레인 부재로 전원 임피던스↑, 고전류 IR drop·발열에 불리
+- **라우팅**: 배선 자유도 감소 → 게이트 신호 경로가 길어짐 (인덕턴스·링잉 우려)
+
+**대응**
+- 넓은 GND 폴리곤으로 리턴 경로 확보, 게이트-리턴 루프 면적 최소화 배치
+- 게이트 저항으로 링잉 억제
+- 제작 후 게이트 파형·발열 측정으로 실제 영향 검증 예정
+
+> 전기적으로는 4층이 유리하나, 제조사 공정 제약으로 2층 재설계가 불가피했다.
+> 성능 트레이드오프를 인지하고 배치·라우팅으로 최대한 보완했으며,
+> 실제 영향은 제작 후 검증 예정이다.
+
+## 구성
+- **메인 컨트롤러**: ESP32-S3
+- **게이트 드라이버**: A89500 ×4
+- **파워 MOSFET**: IRFB4115 ×8 (M1~M8, 풀브리지)
+- **전류 센서**: ACS37220 ×2 (위상별)
+- **출력**: XT90 커넥터 (A+/A-/B+/B-), 벌크 커패시터
+- **기판**: 2-layer PCB
+- **설계 툴**: Altium Designer
+
+## 부품 선정 근거
+
+마진·발열·보호·통합도를 기준으로 선정 (48V 구동, 기동·인러시 시 80~100A 대응).
+
+- **게이트 드라이버 A89500**: 하프브리지 통합(HS+LS) + 부트스트랩 내장,
+  슛스루 방지·슈미트 트리거 입력 내장으로 별도 로직 게이트 불필요
+- **파워 MOSFET IRFB4115**: VDSS 150V(48V 대비 3배 마진), ID 104A, RDS(on) 9.3mΩ 저발열
+- **전류 센서 ACS37220**: ±150A 범위, ACS712 대비 발열 약 1/12, HW FAULT 3µs 과전류 보호
+
+## 완성된 보드
+
+| 앞면 (3D) | 뒷면 (3D) |
+|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/79e0bdce-b672-4483-9675-675eaae1045d" alt="3D 앞면" width="100%"> | <img src="https://github.com/user-attachments/assets/ec3e2d8a-7dd1-4aa5-85af-fba54bc2014c" alt="3D 뒷면" width="100%"> |
+
+## PCB 레이아웃 (2-Layer)
+
+양면(Top / Bottom)에 파워·신호를 분리 배치했습니다.
+
+| Top | Bottom |
+|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/06c2d0f4-43e5-4642-b6da-1965472f863f" alt="Top Layer" width="100%"> | <img src="https://github.com/user-attachments/assets/6aa40084-822d-491b-8de2-b92419c59b69" alt="Bottom Layer" width="100%"> |
+
+## 회고
+- 발주·제조 단계에서 실제 공정 제약(블라인드/베리드 비아)을 겪으며 설계-제조 간 간극을 체감
+- 제약 대응으로 2층 재설계 → 제조 가능성과 성능의 트레이드오프를 직접 판단
+- 성능 영향은 제작 후 실측으로 검증 예정 (게이트 파형·발열)
